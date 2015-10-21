@@ -72,14 +72,14 @@ class Chord_Node extends Actor{
 
     case Join(exist:ActorRef)=>{
       this.exist=exist
-      println("I am %S, I am asking %s to find my position".format(getHash,exist.toString().charAt(25)))
+      //println("I am %S, I am asking %s to find my position".format(getHash,exist.toString().charAt(25)))
       exist!Find_Position(self,getHash)
     }
 
     case Found_Position(predecessor:ActorRef,successor:ActorRef)=>{
       this.predecessor=predecessor
       this.successor=successor
-      println("I am %s, I found my position (%s , %s)".format(getHash(),predecessor.toString().charAt(25),successor.toString().charAt(25)))
+      //println("I am %s, I found my position (%s , %s)".format(getHash(),predecessor.toString().charAt(25),successor.toString().charAt(25)))
       predecessor!Set_Successor(self)//Add by myself
       successor!Set_Predecessor(self)
       init_fingers()
@@ -93,12 +93,12 @@ class Chord_Node extends Actor{
     case Find_Position(node:ActorRef,nodeHash:BigInt)=>{
       val range = new Range(false, getHash(), fingerTable(0).getHash(), true)
       if(range.isInclude(nodeHash)){
-        println("I am %s, the predecessor of node %s, and my successor %s can be its successor".format(getHash(),nodeHash,successor))
+        //println("I am %s, the predecessor of node %s, and my successor %s can be its successor".format(getHash(),nodeHash,successor))
         node!Found_Position(self,this.successor)
       }else{
 
         val target=closest_preceding_finger(nodeHash)
-        println("I am %s, successor is %s, I am not the successor of %s, I am asking %s to find".format(getHash(),successor,nodeHash,target.toString().charAt(25)))
+        //println("I am %s, successor is %s, I am not the successor of %s, I am asking %s to find".format(getHash(),successor,nodeHash,target.toString().charAt(25)))
         target!Find_Position(node,nodeHash)
       }
     }
@@ -125,7 +125,7 @@ class Chord_Node extends Actor{
     }
 
     case Found(code:String,predecessor:ActorRef,successor:ActorRef,step:Int)=>{
-      println("found code %s on node %s".format(code,successor.toString()))
+      println("found code %s on node %s using %s steps".format(code.charAt(25),successor.toString().charAt(25),step))
     }
 
     case Update_Finger(before:BigInt,i:Int,node:ActorRef,nodeHash:BigInt)=>{
@@ -148,12 +148,12 @@ class Chord_Node extends Actor{
     }
 
     case Set_Predecessor(node:ActorRef)=>{
-      println("I am %s, I need to set my predecessor to %s".format(getHash(),node.toString().charAt(25)))
+      //println("I am %s, I need to set my predecessor to %s".format(getHash(),node.toString().charAt(25)))
       this.predecessor=node
     }
 
     case Set_Successor(node:ActorRef)=>{
-      println("I am %s, I need to set my successor to %s".format(getHash(),node.toString().charAt(25)))
+      //println("I am %s, I need to set my successor to %s".format(getHash(),node.toString().charAt(25)))
       this.successor=node
     }
 
