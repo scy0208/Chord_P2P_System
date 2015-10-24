@@ -18,8 +18,7 @@ class Chord_Node extends Actor{
   var exist:ActorRef=null
   var successor=self
   var predecessor=self
-  var sucHash=getHash
-  var preHash=getHash
+
   val m=160
   var fingerTable = new Array[Finger](m)
 
@@ -27,6 +26,9 @@ class Chord_Node extends Actor{
 
   val remoteAddr = RemoteAddressExtension(context.system).address
   val remotePath: String = self.path.toStringWithAddress(remoteAddr)
+
+  var sucHash=getHash
+  var preHash=getHash
 
   for(i <-0 until m) {
     val start=(getHash()+BigInt(2).pow(i))%(BigInt(2).pow(m))
