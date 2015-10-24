@@ -1,11 +1,18 @@
 package main.scala
 
-import akka.actor.ActorRef
+import akka.actor.{ExtensionKey, ActorRef}
+
+import com.roundeights.hasher.Implicits._
+
+
 
 /**
  * Created by chunyangshen on 10/20/15.
  */
-class Finger(start: BigInt, range: Range, var node:ActorRef){
+class Finger(start: BigInt, range: Range, var node:ActorRef, var nodehash:BigInt){
+
+
+
   def getStart(): BigInt = {
     return this.start
   }
@@ -16,11 +23,14 @@ class Finger(start: BigInt, range: Range, var node:ActorRef){
     return this.node
   }
   def getHash():BigInt ={
-    //return BigInt.apply(node.toString().sha1.hex,16)
-    (node.toString.charAt(25)-48).toInt
+    return nodehash
   }
   def setNode(newNode:ActorRef):Unit ={
     this.node=newNode
+  }
+
+  def setHash(nodeHash:BigInt): Unit ={
+    this.nodehash=nodeHash
   }
 
   def print:String={
