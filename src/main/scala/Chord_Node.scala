@@ -18,6 +18,8 @@ class Chord_Node extends Actor{
   var exist:ActorRef=null
   var successor=self
   var predecessor=self
+  var sucHash=getHash
+  var preHash=getHash
   val m=160
   var fingerTable = new Array[Finger](m)
 
@@ -60,6 +62,7 @@ class Chord_Node extends Actor{
 
   def init_fingers():Unit = {
     fingerTable(0).setNode(successor)
+    fingerTable(0).setHash(sucHash)
     for(i<-0 until m-1){
       val range=new Range(true,getHash(),fingerTable(i).getHash(),true)
       if(range.isInclude(fingerTable(i+1).getStart())) {
@@ -94,9 +97,12 @@ class Chord_Node extends Actor{
       exist!Find_Position(self,getHash)
     }
 
-    case Found_Position(predecessor:ActorRef,successor:ActorRef)=>{
+    case Found_Position(predecessor:ActorRef,successor:ActorRef,preHash:BigInt,sucHash:BigInt)=>{
       this.predecessor=predecessor
       this.successor=successor
+      this.preHash=preHash
+      this.sucHash=sucHash
+
       //logger.info("I am %s, I found my position (%s , %s)".format(getHash(),predecessor.toString().charAt(25),successor.toString().charAt(25)))
       predecessor!Set_Successor(self)//Add by myself
       successor!Set_Predecessor(self)
@@ -110,11 +116,11 @@ class Chord_Node extends Actor{
     }
 
     case Find_Position(node:ActorRef,nodeHash:BigInt)=>{
-      logger.info("A new node %s is joing in".format(exist.toString()))
+      //logger.info("A new node %s is joing in".format(exist.toString()))
       val range = new Range(false, getHash(), fingerTable(0).getHash(), true)
       if(range.isInclude(nodeHash)){
         //logger.info("I am %s, the predecessor of node %s, and my successor %s can be its successor".format(getHash(),nodeHash,successor))
-        node!Found_Position(self,this.successor)
+        node!Found_Position(self,this.successor,getHash(),fingerTable(0).getHash())
       }else{
 
         val target=closest_preceding_finger(nodeHash)

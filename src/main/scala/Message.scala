@@ -10,7 +10,7 @@ case class Join(exist:ActorRef)
 
 case class Find_Position(node:ActorRef,nodeHash:BigInt)
 
-case class Found_Position(predecessor:ActorRef,successor:ActorRef)
+case class Found_Position(predecessor:ActorRef,successor:ActorRef,preHash:BigInt,sucHash:BigInt)
 
 case class Find_Finger(node:ActorRef,i:Int,start:BigInt)
 
